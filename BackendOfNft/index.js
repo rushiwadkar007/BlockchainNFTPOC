@@ -27,6 +27,9 @@ mongoose
 
 //middlewares
 app.use(bodyParser.json());
+app.get("/", (req, res) =>{res.status(200).json({
+  data: "SUCCESS"
+})})
 app.use("/api/user", userRoute);
 app.use("/api/token", nftRoute);
 const port = 8081

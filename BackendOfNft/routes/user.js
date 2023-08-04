@@ -24,7 +24,6 @@ sgMail.setApiKey(`SG.${process.env.APIKEY}`);
 
 router.post("/register", async (req, res) => {
   console.log("register called", req.body);
-
   // checking if user already exists or not
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) return res.status(400).send("Email Already Exists");
@@ -34,13 +33,13 @@ router.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-  // creating new ethereum acc for the signedup user
+  // // creating new ethereum acc for the signedup user
   const mnemonic = bip39.generateMnemonic(); //generates string , if we enter same string here all details will be same eg private key etc
   // console.log(`mnemonic: ${mnemonic}`);
 
   const wallet = EthHdWallet.fromMnemonic(mnemonic);
   let address = wallet.generateAddresses(1);
-  // console.log(`EthHdWallet Address: ${address}`);
+  console.log(`EthHdWallet Address: ${address}`);
 
   bip39.mnemonicToSeed(mnemonic).then(async (seed) => {
     // console.log(seed);
@@ -54,7 +53,7 @@ router.post("/register", async (req, res) => {
     const user = new User({
       name: req.body.name,
       email: req.body.email,
-      password: hashPassword,
+      password: req.body.password,
       privateKey: privateKey,
       Address: address2,
       Mnemonic: mnemonic,
@@ -65,14 +64,14 @@ router.post("/register", async (req, res) => {
     // sending email
     const msg = {
       to: `${req.body.email}`,
-      from: "bhutani.sachin1019@gmail.com",
+      from: "bhutani.sachin1019@gmail.com", //bhutani.sachin1019@gmail.com
       subject: "Welcome to our platform",
       html: ` <h1>Thank you for signing up to our platform , here are your wallet details </h1>
         <span> 
          <b> Private Key :</b>  <p>${privateKey} </p> <br>
          <b> Address : </b> <p> ${address2} </p> <br>
          <b> Mnemonic: </b> <p> ${mnemonic} </p> <br>
-         <a href='http://localhost:8080/api/user/confirm/${token}' >link</a> to verify your email.
+         <a href='http://localhost:8081/api/user/confirm/${token}' >link</a> to verify your email.
         </span>  
         `,
     };
@@ -90,8 +89,7 @@ router.post("/register", async (req, res) => {
           );
       }
     });
-
-    user.save();
+    await user.save();
   });
 });
 
