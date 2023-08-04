@@ -23,7 +23,6 @@ dotenv.config();
 sgMail.setApiKey(`SG.${process.env.APIKEY}`);
 
 router.post("/register", async (req, res) => {
-  console.log("register called", req.body);
   // checking if user already exists or not
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) return res.status(400).send("Email Already Exists");
@@ -34,12 +33,10 @@ router.post("/register", async (req, res) => {
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
   // // creating new ethereum acc for the signedup user
-  const mnemonic = bip39.generateMnemonic(); //generates string , if we enter same string here all details will be same eg private key etc
-  // console.log(`mnemonic: ${mnemonic}`);
+  const mnemonic = bip39.generateMnemonic();
 
   const wallet = EthHdWallet.fromMnemonic(mnemonic);
   let address = wallet.generateAddresses(1);
-  console.log(`EthHdWallet Address: ${address}`);
 
   bip39.mnemonicToSeed(mnemonic).then(async (seed) => {
     // console.log(seed);
