@@ -25,16 +25,16 @@ sgMail.setApiKey(`SG.${process.env.APIKEY}`);
 router.post("/register", async (req, res) => {
   console.log("register called", req.body);
 
-  //checking if user already exists or not
+  // checking if user already exists or not
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) return res.status(400).send("Email Already Exists");
 
-  //hashing the password
-  //10 is the complixity of the generated string
+  // hashing the password
+  // 10 is the complixity of the generated string
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-  //creating new ethereum acc for the signedup user
+  // creating new ethereum acc for the signedup user
   const mnemonic = bip39.generateMnemonic(); //generates string , if we enter same string here all details will be same eg private key etc
   // console.log(`mnemonic: ${mnemonic}`);
 
@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
     var wallet = hdwallet.derivePath(path).getWallet();
     var address2 = "0x" + wallet.getAddress().toString("hex");
     var privateKey = wallet.getPrivateKey().toString("hex");
-    //   console.log(`ethereumjs-wallet address: ${address2}`);
+    // console.log(`ethereumjs-wallet address: ${address2}`);
 
     const user = new User({
       name: req.body.name,
@@ -62,7 +62,7 @@ router.post("/register", async (req, res) => {
 
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
 
-    //sending email
+    // sending email
     const msg = {
       to: `${req.body.email}`,
       from: "bhutani.sachin1019@gmail.com",

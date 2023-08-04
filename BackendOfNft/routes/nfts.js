@@ -24,7 +24,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 const web3 = new Web3(
   new Web3.providers.HttpProvider(
-    "https://rinkeby.infura.io/v3/0480f6f61a2c48d18ca1365c7de71013"
+    "https://eth-sepolia.g.alchemy.com/v2/E21g7bv32LZ89BUjL2b2ypIwHEPX_j8C"
   )
 );
 
